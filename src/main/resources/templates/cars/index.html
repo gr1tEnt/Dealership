@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center my-4">Cars</h1>
+
+    <a class="btn btn-primary" href="/cars/add">Add Car</a>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Color</th>
+            <th>Description</th>
+            <th>Mileage</th>
+            <th>Model</th>
+            <th>Price</th>
+            <th>Production Year</th>
+            <th>Image</th>
+            <th>Action</th>
+        </thead>
+        <tbody>
+        <tr th:each="car : ${cars}">
+            <td th:text="${car.id}"></td>
+            <td th:text="${car.color}"></td>
+            <td th:text="${car.description}"></td>
+            <td th:text="${car.mileage}"></td>
+            <td th:text="${car.model}"></td>
+            <td th:text="@{${car.price} + '$'}"></td>
+            <td th:text="${car.productionYear}"></td>
+            <td>
+                <img th:src="@{'/' + ${car.imageFileName}}"
+                     alt="..." width="100">
+            </td>
+            <td style="white-space:nowrap">
+
+                <a class="btn btn-primary btn-sm"
+                   th:href="@{/cars/edit(id=${car.id})}">Edit</a>
+
+                <a class="btn btn-danger btn-sm"
+                   th:href="@{/cars/delete(id=${car.id})}"
+                   onclick="return confirm('Are you sure?')">Delete</a>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+</html>
