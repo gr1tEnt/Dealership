@@ -21,8 +21,6 @@ public class Car {
     private String model;
     private String color;
     private int mileage;
-
-    @Column(name = "image_name")
     private String imageFileName;
 
     @Column(name = "production_year")
