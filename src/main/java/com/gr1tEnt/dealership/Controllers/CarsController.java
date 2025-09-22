@@ -40,12 +40,13 @@ public class CarsController {
     @PostMapping("/add")
     public String addCar(@Valid @ModelAttribute CarDto carDto,
                          BindingResult result) {
-        if(carDto.getImageFile().isEmpty()) {
-            result.addError(new FieldError("carDto", "imageFile", "Image is required"));
-        }
 
         if (result.hasErrors()) {
             return "cars/AddCar";
+        }
+
+        if(carDto.getImageFile().isEmpty()) {
+            result.addError(new FieldError("carDto", "imageFile", "Image is required"));
         }
 
         return "redirect:/cars";
