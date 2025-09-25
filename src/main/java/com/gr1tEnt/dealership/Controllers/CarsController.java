@@ -13,6 +13,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
@@ -107,5 +108,56 @@ public class CarsController {
         }
 
         return "cars/EditCar";
+    }
+
+    @PostMapping("/edit")
+    public String editCar(Model model,
+                          @Valid @ModelAttribute CarDto carDto,
+                          BindingResult result,
+                          @RequestParam UUID id) {
+
+        try {
+            Car car = carsRepository.findById(id).get();
+            model.addAttribute("car", car);
+
+            if (result.hasErrors()) {
+                return "cars/EditCar";
+            }
+
+            // deleting old car's image
+            if (!carDto.getImageFile().isEmpty()) {
+                String uploadDir = "public/images/";
+                Path oldImagePath = Paths.get(uploadDir + car.getImageFileName());
+
+                try {
+                    Files.delete(oldImagePath);
+                } catch (IOException e) {
+                    System.out.printf("IOException: %s\n", e.getMessage());
+                }
+
+                // saving new image
+                MultipartFile image = carDto.getImageFile();
+                Date createdAt = new Date();
+                String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
+
+                try (InputStream inputStream = image.getInputStream()) {
+                    Files.copy(inputStream, Paths.get(uploadDir + imageFileName), StandardCopyOption.REPLACE_EXISTING);
+                }
+                car.setImageFileName(imageFileName);
+            }
+
+            car.setModel(carDto.getModel());
+            car.setDescription(carDto.getDescription());
+            car.setColor(carDto.getColor());
+            car.setMileage(carDto.getMileage());
+            car.setPrice(carDto.getPrice());
+            car.setProductionYear(carDto.getProductionYear());
+
+            carsRepository.save(car);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return "redirect:/cars";
     }
 }
