@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.nio.file.*;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/cars")
@@ -69,7 +70,6 @@ public class CarsController {
 
         } catch (IOException e) {
             System.out.printf("IOException: %s\n", e.getMessage());
-            ;
         }
 
         Car car = new Car();
@@ -83,5 +83,29 @@ public class CarsController {
         carsRepository.save(car);
 
         return "redirect:/cars";
+    }
+
+    @GetMapping("/edit")
+    public String showEditPage(Model model, @RequestParam UUID id) {
+
+        try {
+            Car car = carsRepository.findById(id).get();
+            model.addAttribute("car", car);
+
+            CarDto carDto = new CarDto();
+            carDto.setModel(car.getModel());
+            carDto.setDescription(car.getDescription());
+            carDto.setColor(car.getColor());
+            carDto.setMileage(car.getMileage());
+            carDto.setPrice(car.getPrice());
+            carDto.setProductionYear(car.getProductionYear());
+
+            model.addAttribute("carDto", carDto);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return "redirect:/cars";
+        }
+
+        return "cars/EditCar";
     }
 }
