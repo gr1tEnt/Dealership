@@ -36,7 +36,7 @@
             <td th:text="@{${car.price} + '$'}"></td>
             <td th:text="${car.productionYear}"></td>
             <td>
-                <img th:src="@{'/' + ${car.imageFileName}}"
+                <img th:src="@{'/images/' + ${car.imageFileName}}"
                      alt="..." width="100">
             </td>
             <td style="white-space:nowrap">
