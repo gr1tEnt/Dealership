@@ -160,4 +160,27 @@ public class CarsController {
 
         return "redirect:/cars";
     }
+
+    @GetMapping("/delete")
+    public String deleteCar(@RequestParam UUID id) {
+
+        try {
+            Car car = carsRepository.findById(id).get();
+
+            // delete car image before deleting the object
+            Path imagePath = Paths.get("public/images/" + car.getImageFileName());
+
+            try {
+                Files.delete(imagePath);
+            } catch (IOException e) {
+                System.out.printf("IOException: %s\n", e.getMessage());
+            }
+
+            carsRepository.delete(car);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+        return "redirect:/cars";
+    }
 }
