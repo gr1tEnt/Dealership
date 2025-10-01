@@ -91,7 +91,7 @@ public class CarsController {
     public String showEditPage(Model model, @RequestParam UUID id) {
 
         try {
-            Car car = carsRepository.findById(id).get();
+            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
             model.addAttribute("car", car);
 
             CarDto carDto = new CarDto();
@@ -118,7 +118,7 @@ public class CarsController {
                           @RequestParam UUID id) {
 
         try {
-            Car car = carsRepository.findById(id).get();
+            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
             model.addAttribute("car", car);
 
             if (result.hasErrors()) {
