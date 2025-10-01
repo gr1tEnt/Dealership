@@ -161,7 +161,7 @@ public class CarsController {
         return "redirect:/cars";
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public String deleteCar(@RequestParam UUID id) {
 
         try {

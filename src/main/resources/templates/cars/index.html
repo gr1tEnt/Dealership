@@ -44,9 +44,10 @@
                 <a class="btn btn-primary btn-sm"
                    th:href="@{/cars/edit(id=${car.id})}">Edit</a>
 
-                <a class="btn btn-danger btn-sm"
-                   th:href="@{/cars/delete(id=${car.id})}"
-                   onclick="return confirm('Are you sure?')">Delete</a>
+                <form th:action="@{/cars/delete(id=${car.id})}" th:method="delete" style="display: inline;"
+                      onsubmit="return confirm('Are you sure?');">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
 
             </td>
         </tr>
