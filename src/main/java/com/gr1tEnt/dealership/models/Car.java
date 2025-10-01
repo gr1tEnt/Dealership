@@ -9,8 +9,6 @@ import java.util.UUID;
 @Table(name = "cars")
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor // constructor for Builder
 @NoArgsConstructor // constructor for JPA
 public class Car {
 
@@ -28,4 +26,15 @@ public class Car {
     @Column(name = "production_year")
     private int productionYear;
     private double price;
+
+    @Builder
+    public Car(String description, String model, String color, int mileage, String imageFileName, int productionYear, double price) {
+        this.description = description;
+        this.model = model;
+        this.color = color;
+        this.mileage = mileage;
+        this.imageFileName = imageFileName;
+        this.productionYear = productionYear;
+        this.price = price;
+    }
 }
