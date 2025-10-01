@@ -37,7 +37,7 @@ public class CarsController {
 
     @GetMapping("/add")
     public String showAddPage(Model model) {
-        model.addAttribute("carDto", new CarDto());
+        model.addAttribute("carDto", CarDto.builder().build());
         return "cars/AddCar";
     }
 
@@ -76,7 +76,7 @@ public class CarsController {
         Car car = Car.builder()
                 .model(carDto.getModel())
                 .description(carDto.getDescription())
-                .color(carDto.getDescription())
+                .color(carDto.getColor())
                 .mileage(carDto.getMileage())
                 .price(carDto.getPrice())
                 .productionYear(carDto.getProductionYear())
@@ -94,13 +94,14 @@ public class CarsController {
             Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
             model.addAttribute("car", car);
 
-            CarDto carDto = new CarDto();
-            carDto.setModel(car.getModel());
-            carDto.setDescription(car.getDescription());
-            carDto.setColor(car.getColor());
-            carDto.setMileage(car.getMileage());
-            carDto.setPrice(car.getPrice());
-            carDto.setProductionYear(car.getProductionYear());
+            CarDto carDto = CarDto.builder()
+                    .model(car.getModel())
+                    .description(car.getDescription())
+                    .color(car.getColor())
+                    .mileage(car.getMileage())
+                    .price(car.getPrice())
+                    .productionYear(car.getProductionYear())
+                    .build();
 
             model.addAttribute("carDto", carDto);
         } catch (Exception e) {
