@@ -1,34 +1,33 @@
 package com.gr1tEnt.dealership.models;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Value;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
-@Setter
+@Value // value adds encapsulation, makes field immutable, adds getters/constructors by itself
+@Builder
 public class CarDto {
     @NotEmpty(message = "The model is required")
-    private String model;
+    String model;
 
     @Size(min = 10, max = 2000, message = "The description should be between 10 and 2000 characters")
-    private String description;
+    String description;
 
     @NotEmpty(message = "The color is required")
-    private String color;
+    String color;
 
     @Min(0)
     @NotNull(message = "Mileage is required")
-    private Integer mileage;
+    Integer mileage;
 
     @NotNull(message = "The production year is required")
-    private Integer productionYear;
+    Integer productionYear;
 
     @Min(value = 0, message = "Price must be a positive number")
     @NotNull(message = "Price is required")
-    private double price;
+    double price;
 
-    private MultipartFile imageFile;
-
+    MultipartFile imageFile;
 
 }
