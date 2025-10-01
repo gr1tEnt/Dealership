@@ -73,14 +73,15 @@ public class CarsController {
             System.out.printf("IOException: %s\n", e.getMessage());
         }
 
-        Car car = new Car();
-        car.setModel(carDto.getModel());
-        car.setDescription(carDto.getDescription());
-        car.setColor(carDto.getColor());
-        car.setMileage(carDto.getMileage());
-        car.setPrice(carDto.getPrice());
-        car.setProductionYear(carDto.getProductionYear());
-        car.setImageFileName(imageFileName);
+        Car car = Car.builder()
+                .model(carDto.getModel())
+                .description(carDto.getDescription())
+                .color(carDto.getDescription())
+                .mileage(carDto.getMileage())
+                .price(carDto.getPrice())
+                .productionYear(carDto.getProductionYear())
+                .imageFileName(imageFileName)
+                .build();
         carsRepository.save(car);
 
         return "redirect:/cars";

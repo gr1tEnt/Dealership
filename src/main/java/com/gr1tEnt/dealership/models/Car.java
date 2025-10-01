@@ -1,8 +1,7 @@
 package com.gr1tEnt.dealership.models;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -10,6 +9,9 @@ import java.util.UUID;
 @Table(name = "cars")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor // constructor for Builder
+@NoArgsConstructor // constructor for JPA
 public class Car {
 
     @Id
