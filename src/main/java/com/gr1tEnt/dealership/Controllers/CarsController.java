@@ -165,7 +165,7 @@ public class CarsController {
     public String deleteCar(@RequestParam UUID id) {
 
         try {
-            Car car = carsRepository.findById(id).get();
+            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
 
             // delete car image before deleting the object
             Path imagePath = Paths.get("public/images/" + car.getImageFileName());
