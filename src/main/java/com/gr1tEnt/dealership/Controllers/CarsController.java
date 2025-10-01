@@ -112,7 +112,7 @@ public class CarsController {
         return "cars/EditCar";
     }
 
-    @PostMapping("/edit")
+    @PutMapping("/edit")
     public String editCar(Model model,
                           @Valid @ModelAttribute CarDto carDto,
                           BindingResult result,
