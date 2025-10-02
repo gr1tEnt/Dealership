@@ -3,60 +3,63 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>Tailwind Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-<div class="container">
-    <h1 class="text-center my-4">Cars</h1>
+<body class="bg-gray-50">
+<div class="max-w-6xl mx-auto px-4">
 
-    <a class="btn btn-primary" href="/cars/add">Add Car</a>
+    <h1 class="text-center text-3xl font-bold my-6">Cars</h1>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Color</th>
-            <th>Description</th>
-            <th>Mileage</th>
-            <th>Model</th>
-            <th>Price</th>
-            <th>Production Year</th>
-            <th>Image</th>
-            <th>Action</th>
-        </thead>
-        <tbody>
-        <tr th:each="car : ${cars}">
-            <td th:text="${car.id}"></td>
-            <td th:text="${car.color}"></td>
-            <td th:text="${car.description}"></td>
-            <td th:text="${car.mileage}"></td>
-            <td th:text="${car.model}"></td>
-            <td th:text="@{${car.price} + '$'}"></td>
-            <td th:text="${car.productionYear}"></td>
-            <td>
-                <img th:src="@{'/images/' + ${car.imageFileName}}"
-                     alt="..." width="100">
-            </td>
-            <td style="white-space:nowrap">
+    <a href="/cars/add" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+        Add Car
+    </a>
 
-                <a class="btn btn-primary btn-sm"
-                   th:href="@{/cars/edit(id=${car.id})}">Edit</a>
-
-                <form th:action="@{/cars/delete(id=${car.id})}" th:method="delete" style="display: inline;"
-                      onsubmit="return confirm('Are you sure?');">
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
-
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
+    <div class="overflow-x-auto mt-6">
+        <table class="min-w-full border border-gray-200 divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">ID</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Color</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 w-64">Description</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Mileage</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Model</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Production Year</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Action</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 bg-white">
+            <tr th:each="car : ${cars}">
+                <td class="px-4 py-2 text-sm" th:text="${car.id}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.color}"></td>
+                <td class="px-4 py-2 text-sm w-64" th:text="${car.description}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.mileage}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.model}"></td>
+                <td class="px-4 py-2 text-sm" th:text="@{${car.price} + '$'}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.productionYear}"></td>
+                <td class="px-4 py-2">
+                    <img th:src="@{'/images/' + ${car.imageFileName}}" alt="Car image"
+                         class="w-64 rounded-md border">
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap space-x-2">
+                    <a th:href="@{/cars/edit(id=${car.id})}"
+                       class="inline-block bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition">
+                        Edit
+                    </a>
+                    <form th:action="@{/cars/delete(id=${car.id})}" th:method="delete" class="inline"
+                          onsubmit="return confirm('Are you sure?');">
+                        <button type="submit"
+                                class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
 </body>
 </html>
