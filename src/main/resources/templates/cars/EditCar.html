@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Car</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<div class="bg-white shadow-lg rounded-lg w-full max-w-2xl p-8">
+    <h1 class="text-2xl font-bold mb-6 text-center">Edit Car</h1>
+
+    <form class="space-y-5" method="post" enctype="multipart/form-data">
+        <!-- ID -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">ID</label>
+            <input type="text" th:value="${car.id}" readonly
+                   class="w-full px-4 py-2 border rounded-lg bg-gray-100 text-gray-600">
+        </div>
+
+        <!-- Model -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Model</label>
+            <input type="text" th:value="${car.model}"
+                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Description</label>
+            <textarea rows="4"
+                      class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200"
+                      th:text="${car.description}"></textarea>
+        </div>
+
+        <!-- Color -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Color</label>
+            <input type="text" th:value="${car.color}"
+                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- Mileage -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Mileage</label>
+            <input type="number" th:value="${car.mileage}"
+                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- Production Year -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Production Year</label>
+            <input type="number" th:value="${car.productionYear}"
+                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- Price -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Price</label>
+            <input type="number" th:value="${car.price}"
+                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+        </div>
+
+        <!-- Image Preview + Upload -->
+        <div>
+            <label class="block text-gray-700 font-medium mb-1">Current Image</label>
+            <img th:src="@{'/images/' + ${car.imageFileName}}" alt="Car image"
+                 class="w-full max-h-64 object-cover rounded-lg shadow mb-3 border">
+            <input type="file" name="imageFile"
+                   class="w-full px-4 py-2 border rounded-lg cursor-pointer">
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4 mt-6">
+            <button type="button"
+                    class="px-5 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Cancel</button>
+            <button type="submit"
+                    class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Submit</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
