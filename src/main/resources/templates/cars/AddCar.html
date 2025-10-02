@@ -1,117 +1,93 @@
 <!doctype html>
-<html lang="en" class="bg-gray-100">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dealership</title>
+    <title>New Car</title>
     <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
-<body>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<div class="max-w-4xl mx-auto py-8 px-4">
-    <div class="bg-white shadow-lg rounded-xl p-8">
-        <h2 class="text-3xl font-bold text-gray-800 text-center mb-8">New Car</h2>
+<div class="bg-white shadow-lg rounded-lg w-full max-w-2xl p-8">
+    <h2 class="text-3xl font-bold text-gray-800 text-center mb-8">New Car</h2>
 
-        <form method="post" enctype="multipart/form-data" th:action="@{/cars/add}" th:object="${carDto}">
+    <form method="post" enctype="multipart/form-data"
+          th:action="@{/cars/add}" th:object="${carDto}" class="space-y-5">
 
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="model">
-                        Model
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <input class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" id="model" th:field="*{model}">
-                    <p th:if="${#fields.hasErrors('model')}" class="text-red-500 text-xs mt-1" th:errors="*{model}"></p>
-                </div>
-            </div>
+        <!-- Model -->
+        <div>
+            <label for="model" class="block text-gray-700 font-medium mb-1">Model</label>
+            <input id="model" th:field="*{model}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('model')}" class="text-red-500 text-xs mt-1" th:errors="*{model}"></p>
+        </div>
 
-            <div class="md:flex md:items-start mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="description">
-                        Description
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <textarea class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" rows="3" id="description" th:field="*{description}"></textarea>
-                    <p th:if="${#fields.hasErrors('description')}" class="text-red-500 text-xs mt-1" th:errors="*{description}"></p>
-                </div>
-            </div>
+        <!-- Description -->
+        <div>
+            <label for="description" class="block text-gray-700 font-medium mb-1">Description</label>
+            <textarea id="description" rows="3" th:field="*{description}"
+                      class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200"></textarea>
+            <p th:if="${#fields.hasErrors('description')}" class="text-red-500 text-xs mt-1" th:errors="*{description}"></p>
+        </div>
 
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="color">
-                        Color
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <input class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" id="color" th:field="*{color}">
-                    <p th:if="${#fields.hasErrors('color')}" class="text-red-500 text-xs mt-1" th:errors="*{color}"></p>
-                </div>
-            </div>
+        <!-- Color -->
+        <div>
+            <label for="color" class="block text-gray-700 font-medium mb-1">Color</label>
+            <input id="color" th:field="*{color}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('color')}" class="text-red-500 text-xs mt-1" th:errors="*{color}"></p>
+        </div>
 
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="mileage">
-                        Mileage
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <input type="number" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" id="mileage" th:field="*{mileage}">
-                    <p th:if="${#fields.hasErrors('mileage')}" class="text-red-500 text-xs mt-1" th:errors="*{mileage}"></p>
-                </div>
-            </div>
+        <!-- Mileage -->
+        <div>
+            <label for="mileage" class="block text-gray-700 font-medium mb-1">Mileage</label>
+            <input type="number" id="mileage" th:field="*{mileage}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('mileage')}" class="text-red-500 text-xs mt-1" th:errors="*{mileage}"></p>
+        </div>
 
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="productionYear">
-                        Production Year
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <input type="number" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" id="productionYear" th:field="*{productionYear}">
-                    <p th:if="${#fields.hasErrors('productionYear')}" class="text-red-500 text-xs mt-1" th:errors="*{productionYear}"></p>
-                </div>
-            </div>
+        <!-- Production Year -->
+        <div>
+            <label for="productionYear" class="block text-gray-700 font-medium mb-1">Production Year</label>
+            <input type="number" id="productionYear" th:field="*{productionYear}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('productionYear')}" class="text-red-500 text-xs mt-1" th:errors="*{productionYear}"></p>
+        </div>
 
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="price">
-                        Price
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <input type="number" step="0.01" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" id="price" th:field="*{price}">
-                    <p th:if="${#fields.hasErrors('price')}" class="text-red-500 text-xs mt-1" th:errors="*{price}"></p>
-                </div>
-            </div>
+        <!-- Price -->
+        <div>
+            <label for="price" class="block text-gray-700 font-medium mb-1">Price</label>
+            <input type="number" step="0.01" id="price" th:field="*{price}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('price')}" class="text-red-500 text-xs mt-1" th:errors="*{price}"></p>
+        </div>
 
-            <div class="md:flex md:items-center mb-6">
-                <div class="md:w-1/3">
-                    <label class="block text-gray-600 font-bold md:text-right mb-1 md:mb-0 pr-4" for="imageFile">
-                        Image
-                    </label>
-                </div>
-                <div class="md:w-2/3">
-                    <input type="file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100" id="imageFile" th:field="*{imageFile}">
-                    <p th:if="${#fields.hasErrors('imageFile')}" class="text-red-500 text-xs mt-1" th:errors="*{imageFile}"></p>
-                </div>
-            </div>
+        <!-- Image -->
+        <div>
+            <label for="imageFile" class="block text-gray-700 font-medium mb-1">Image</label>
+            <input type="file" id="imageFile" th:field="*{imageFile}"
+                   class="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-indigo-50 file:text-indigo-700
+                          hover:file:bg-indigo-100">
+            <p th:if="${#fields.hasErrors('imageFile')}" class="text-red-500 text-xs mt-1" th:errors="*{imageFile}"></p>
+        </div>
 
-            <div class="md:flex md:items-center mt-8">
-                <div class="md:w-1/3"></div>
-                <div class="md:w-2/3 flex space-x-4">
-                    <button type="submit" class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Submit
-                    </button>
-                    <a class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="/cars" role="button">
-                        Cancel
-                    </a>
-                </div>
-            </div>
+        <!-- Buttons -->
+        <div class="flex justify-end space-x-4 pt-6">
+            <a href="/cars"
+               class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition">
+                Cancel
+            </a>
+            <button type="submit"
+                    class="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow-sm hover:bg-indigo-700 transition">
+                Submit
+            </button>
+        </div>
 
-        </form>
-    </div>
+    </form>
 </div>
 
 </body>
