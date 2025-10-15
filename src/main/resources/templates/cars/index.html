@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tailwind Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+<div class="max-w-6xl mx-auto px-4">
+
+    <h1 class="text-center text-3xl font-bold my-6">Cars</h1>
+
+    <a href="/cars/add" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+        Add Car
+    </a>
+
+    <div class="overflow-x-auto mt-6">
+        <table class="min-w-full border border-gray-200 divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+            <tr>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">ID</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Color</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700 w-64">Description</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Mileage</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Model</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Price</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Production Year</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Image</th>
+                <th class="px-4 py-2 text-left text-sm font-semibold text-gray-700">Action</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 bg-white">
+            <tr th:each="car : ${cars}">
+                <td class="px-4 py-2 text-sm" th:text="${car.id}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.color}"></td>
+                <td class="px-4 py-2 text-sm w-64" th:text="${car.description}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.mileage}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.model}"></td>
+                <td class="px-4 py-2 text-sm" th:text="@{${car.price} + '$'}"></td>
+                <td class="px-4 py-2 text-sm" th:text="${car.productionYear}"></td>
+                <td class="px-4 py-2">
+                    <img th:src="@{'/images/' + ${car.imageFileName}}" alt="Car image"
+                         class="w-64 rounded-md border">
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap space-x-2">
+                    <a th:href="@{/cars/edit(id=${car.id})}"
+                       class="inline-block bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 transition">
+                        Edit
+                    </a>
+                    <form th:action="@{/cars/delete(id=${car.id})}" th:method="delete" class="inline"
+                          onsubmit="return confirm('Are you sure?');">
+                        <button type="submit"
+                                class="bg-red-600 text-white text-sm px-3 py-1 rounded hover:bg-red-700 transition">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
