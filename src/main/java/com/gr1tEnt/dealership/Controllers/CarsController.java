@@ -152,7 +152,7 @@ public class CarsController {
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
-                
+
                 try (InputStream inputStream = image.getInputStream()) {
                     Files.copy(inputStream, Paths.get(uploadDir + imageFileName),
                             StandardCopyOption.REPLACE_EXISTING);
@@ -180,22 +180,21 @@ public class CarsController {
     @DeleteMapping("/delete")
     public String deleteCar(@RequestParam UUID id) {
 
+        Car car = carsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
+
+        // Delete car image
+        Path imagePath = Paths.get("public/images/" + car.getImageFileName());
+
         try {
-            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
-
-            // delete car image before deleting the object
-            Path imagePath = Paths.get("public/images/" + car.getImageFileName());
-
-            try {
+            if (Files.exists(imagePath)) {
                 Files.delete(imagePath);
-            } catch (IOException e) {
-                System.out.printf("IOException: %s\n", e.getMessage());
             }
-
-            carsRepository.delete(car);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error deleting image: " + e.getMessage());
         }
+
+        carsRepository.delete(car);
 
         return "redirect:/cars";
     }
