@@ -118,47 +118,61 @@ public class CarsController {
                           BindingResult result,
                           @RequestParam UUID id) {
 
-        try {
-            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
-            model.addAttribute("car", car);
+        // Global Exception Handler will catch the error
+        Car car = carsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
+        model.addAttribute("car", car);
 
-            // deleting old car's image
-            if (carDto.getImageFile() != null && !carDto.getImageFile().isEmpty()) {
-                String uploadDir = "public/images/";
-                Path oldImagePath = Paths.get(uploadDir + car.getImageFileName());
+        if (result.hasErrors()) {
+            return "EditCar";
+        }
 
-                try {
+        // Deleting old car's image
+        if (carDto.getImageFile() != null && !carDto.getImageFile().isEmpty()) {
+            String uploadDir = "public/images/";
+            Path oldImagePath = Paths.get(uploadDir + car.getImageFileName());
+
+            // Delete old image if it exists
+            try {
+                if (!Files.exists(oldImagePath)) {
                     Files.delete(oldImagePath);
-                } catch (IOException e) {
-                    System.out.printf("IOException: %s\n", e.getMessage());
                 }
-
-                // saving new image
-                MultipartFile image = carDto.getImageFile();
-                Date createdAt = new Date();
-                String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
-
-                try (InputStream inputStream = image.getInputStream()) {
-                    Files.copy(inputStream, Paths.get(uploadDir + imageFileName), StandardCopyOption.REPLACE_EXISTING);
-                }
-                car.setImageFileName(imageFileName);
+            } catch (IOException e) {
+                System.err.println("Error deleting old image: " + e.getMessage());
+                // Continue even if old image deletion fails
             }
 
-            if (result.hasErrors()) {
+            // Saving new image
+            MultipartFile image = carDto.getImageFile();
+            Date createdAt = new Date();
+            String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
+
+            try {
+                Path uploadPath = Paths.get(uploadDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                
+                try (InputStream inputStream = image.getInputStream()) {
+                    Files.copy(inputStream, Paths.get(uploadDir + imageFileName),
+                            StandardCopyOption.REPLACE_EXISTING);
+                    car.setImageFileName(imageFileName);
+                }
+            } catch (IOException e) {
+                System.err.println("Error saving new image: " + e.getMessage());
+                result.addError(new FieldError("carDto", "imageFile", "Error uploading image: " + e.getMessage()));
                 return "EditCar";
             }
-
-            car.setModel(carDto.getModel());
-            car.setDescription(carDto.getDescription());
-            car.setColor(carDto.getColor());
-            car.setMileage(carDto.getMileage());
-            car.setPrice(carDto.getPrice());
-            car.setProductionYear(carDto.getProductionYear());
-
-            carsRepository.save(car);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
         }
+
+        car.setModel(carDto.getModel());
+        car.setDescription(carDto.getDescription());
+        car.setColor(carDto.getColor());
+        car.setMileage(carDto.getMileage());
+        car.setPrice(carDto.getPrice());
+        car.setProductionYear(carDto.getProductionYear());
+
+        carsRepository.save(car);
 
         return "redirect:/cars";
     }

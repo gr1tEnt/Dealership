@@ -4,14 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Car</title>
+    <link th:href="@{/css/output.css}" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 <div class="bg-white shadow-lg rounded-lg w-full max-w-2xl p-8">
     <h1 class="text-2xl font-bold mb-6 text-center">Edit Car</h1>
 
-    <form class="space-y-5" method="post" enctype="multipart/form-data">
-        <!-- ID -->
+    <form class="space-y-5" method="post" enctype="multipart/form-data"
+          th:action="@{/cars/edit(id=${car.id})}" th:object="${carDto}">
+        <!-- Hidden fields for PUT method and ID -->
+        <input type="hidden" name="_method" value="put"/>
+        <input type="hidden" name="id" th:value="${car.id}"/>
+        
+        <!-- ID (display only) -->
         <div>
             <label class="block text-gray-700 font-medium mb-1">ID</label>
             <input type="text" th:value="${car.id}" readonly
@@ -20,45 +26,50 @@
 
         <!-- Model -->
         <div>
-            <label class="block text-gray-700 font-medium mb-1">Model</label>
-            <input type="text" th:value="${car.model}"
-                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+            <label for="model" class="block text-gray-700 font-medium mb-1">Model</label>
+            <input type="text" id="model" th:field="*{model}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('model')}" class="text-red-500 text-xs mt-1" th:errors="*{model}"></p>
         </div>
 
         <!-- Description -->
         <div>
-            <label class="block text-gray-700 font-medium mb-1">Description</label>
-            <textarea rows="4"
-                      class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200"
-                      th:text="${car.description}"></textarea>
+            <label for="description" class="block text-gray-700 font-medium mb-1">Description</label>
+            <textarea id="description" rows="4" th:field="*{description}"
+                      class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200"></textarea>
+            <p th:if="${#fields.hasErrors('description')}" class="text-red-500 text-xs mt-1" th:errors="*{description}"></p>
         </div>
 
         <!-- Color -->
         <div>
-            <label class="block text-gray-700 font-medium mb-1">Color</label>
-            <input type="text" th:value="${car.color}"
-                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+            <label for="color" class="block text-gray-700 font-medium mb-1">Color</label>
+            <input type="text" id="color" th:field="*{color}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('color')}" class="text-red-500 text-xs mt-1" th:errors="*{color}"></p>
         </div>
 
         <!-- Mileage -->
         <div>
-            <label class="block text-gray-700 font-medium mb-1">Mileage</label>
-            <input type="number" th:value="${car.mileage}"
-                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+            <label for="mileage" class="block text-gray-700 font-medium mb-1">Mileage</label>
+            <input type="number" id="mileage" th:field="*{mileage}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('mileage')}" class="text-red-500 text-xs mt-1" th:errors="*{mileage}"></p>
         </div>
 
         <!-- Production Year -->
         <div>
-            <label class="block text-gray-700 font-medium mb-1">Production Year</label>
-            <input type="number" th:value="${car.productionYear}"
-                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+            <label for="productionYear" class="block text-gray-700 font-medium mb-1">Production Year</label>
+            <input type="number" id="productionYear" th:field="*{productionYear}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('productionYear')}" class="text-red-500 text-xs mt-1" th:errors="*{productionYear}"></p>
         </div>
 
         <!-- Price -->
         <div>
-            <label class="block text-gray-700 font-medium mb-1">Price</label>
-            <input type="number" th:value="${car.price}"
-                   class="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-200">
+            <label for="price" class="block text-gray-700 font-medium mb-1">Price</label>
+            <input type="number" step="0.01" id="price" th:field="*{price}"
+                   class="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring focus:ring-indigo-200">
+            <p th:if="${#fields.hasErrors('price')}" class="text-red-500 text-xs mt-1" th:errors="*{price}"></p>
         </div>
 
         <!-- Image Preview + Upload -->
@@ -66,16 +77,23 @@
             <label class="block text-gray-700 font-medium mb-1">Current Image</label>
             <img th:src="@{'/images/' + ${car.imageFileName}}" alt="Car image"
                  class="w-full max-h-64 object-cover rounded-lg shadow mb-3 border">
-            <input type="file" name="imageFile"
-                   class="w-full px-4 py-2 border rounded-lg cursor-pointer">
+            <label for="imageFile" class="block text-gray-700 font-medium mb-1 mt-3">Upload New Image (Optional)</label>
+            <input type="file" id="imageFile" th:field="*{imageFile}"
+                   class="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-indigo-50 file:text-indigo-700
+                          hover:file:bg-indigo-100">
+            <p th:if="${#fields.hasErrors('imageFile')}" class="text-red-500 text-xs mt-1" th:errors="*{imageFile}"></p>
         </div>
 
         <!-- Buttons -->
         <div class="flex justify-end space-x-4 mt-6">
-            <button type="button"
-                    class="px-5 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400">Cancel</button>
+            <a href="/cars"
+               class="px-5 py-2 bg-gray-200 text-gray-800 rounded-lg shadow-sm hover:bg-gray-300 transition">Cancel</a>
             <button type="submit"
-                    class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Submit</button>
+                    class="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow-sm hover:bg-indigo-700 transition">Submit</button>
         </div>
     </form>
 </div>
