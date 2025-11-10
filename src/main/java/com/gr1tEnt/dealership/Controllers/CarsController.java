@@ -45,12 +45,12 @@ public class CarsController {
     public String addCar(@Valid @ModelAttribute CarDto carDto,
                          BindingResult result) {
 
-        if (result.hasErrors()) {
-            return "cars/AddCar";
+        if (carDto.getImageFile() == null || carDto.getImageFile().isEmpty()) {
+            result.addError(new FieldError("carDto", "imageFile", "Image is required"));
         }
 
-        if (carDto.getImageFile().isEmpty()) {
-            result.addError(new FieldError("carDto", "imageFile", "Image is required"));
+        if (result.hasErrors()) {
+            return "cars/AddCar";
         }
 
         MultipartFile image = carDto.getImageFile();
@@ -122,12 +122,8 @@ public class CarsController {
             Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
             model.addAttribute("car", car);
 
-            if (result.hasErrors()) {
-                return "cars/EditCar";
-            }
-
             // deleting old car's image
-            if (!carDto.getImageFile().isEmpty()) {
+            if (carDto.getImageFile() != null && !carDto.getImageFile().isEmpty()) {
                 String uploadDir = "public/images/";
                 Path oldImagePath = Paths.get(uploadDir + car.getImageFileName());
 
@@ -146,6 +142,10 @@ public class CarsController {
                     Files.copy(inputStream, Paths.get(uploadDir + imageFileName), StandardCopyOption.REPLACE_EXISTING);
                 }
                 car.setImageFileName(imageFileName);
+            }
+
+            if (result.hasErrors()) {
+                return "cars/EditCar";
             }
 
             car.setModel(carDto.getModel());
