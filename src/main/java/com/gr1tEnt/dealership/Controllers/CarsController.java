@@ -32,13 +32,13 @@ public class CarsController {
     public String showCars(Model model) {
         List<Car> cars = carsRepository.findAll(Sort.by(Sort.Direction.ASC, "mileage"));
         model.addAttribute("cars", cars);
-        return "cars/index";
+        return "index";
     }
 
     @GetMapping("/add")
     public String showAddPage(Model model) {
         model.addAttribute("carDto", CarDto.builder().build());
-        return "cars/AddCar";
+        return "AddCar";
     }
 
     @PostMapping("/add")
@@ -50,7 +50,7 @@ public class CarsController {
         }
 
         if (result.hasErrors()) {
-            return "cars/AddCar";
+            return "AddCar";
         }
 
         MultipartFile image = carDto.getImageFile();
@@ -109,7 +109,7 @@ public class CarsController {
             return "redirect:/cars";
         }
 
-        return "cars/EditCar";
+        return "EditCar";
     }
 
     @PutMapping("/edit")
@@ -145,7 +145,7 @@ public class CarsController {
             }
 
             if (result.hasErrors()) {
-                return "cars/EditCar";
+                return "EditCar";
             }
 
             car.setModel(carDto.getModel());
