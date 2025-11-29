@@ -53,4 +53,18 @@ public class LocalFileStorageService implements FileStorageService {
         }
 
     }
+
+    @Override
+    public void delete(String fileName) {
+        if (fileName == null || fileName.isEmpty()) return;
+
+        try {
+            Path filePath = rootLocation.resolve(fileName)
+                    .normalize().toAbsolutePath();
+
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete file", e);
+        }
+    }
 }
