@@ -164,14 +164,17 @@ public class CarsController {
             }
         }
 
-        car.setModel(carDto.getModel());
-        car.setDescription(carDto.getDescription());
-        car.setColor(carDto.getColor());
-        car.setMileage(carDto.getMileage());
-        car.setPrice(carDto.getPrice());
-        car.setProductionYear(carDto.getProductionYear());
+        Car car1 = Car.builder()
+                .model(carDto.getModel())
+                .description(carDto.getDescription())
+                .color(carDto.getColor())
+                .mileage(carDto.getMileage())
+                .price(carDto.getPrice())
+                .productionYear(carDto.getProductionYear())
+                .imageFileName(String.valueOf(carDto.getImageFile()))
+                .build();
 
-        carsRepository.save(car);
+        carsRepository.save(car1);
 
         return "redirect:/cars";
     }
