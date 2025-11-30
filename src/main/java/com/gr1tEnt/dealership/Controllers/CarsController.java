@@ -7,20 +7,14 @@ import com.gr1tEnt.dealership.services.CarsRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.*;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,7 +29,7 @@ public class CarsController {
 
     @GetMapping({"", "/"})
     public String showCars(Model model) {
-        List<Car> cars = carsRepository.findAll(Sort.by(Sort.Direction.ASC, "mileage"));
+        List<Car> cars = carService.getAllCars();
         model.addAttribute("cars", cars);
         return "index";
     }
@@ -73,7 +67,7 @@ public class CarsController {
     public String showEditPage(Model model, @RequestParam UUID id) {
 
         try {
-            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
+            Car car = carService.getCarById(id);
             model.addAttribute("car", car);
 
             CarDto carDto = CarDto.builder()

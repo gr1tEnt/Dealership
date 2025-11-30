@@ -4,8 +4,10 @@ import com.gr1tEnt.dealership.models.Car;
 import com.gr1tEnt.dealership.models.CarDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -65,5 +67,14 @@ public class CarService {
         carsRepository.delete(car);
 
         fileStorageService.delete(filename);
+    }
+
+    public List<Car> getAllCars() {
+        return carsRepository.findAll(Sort.by(Sort.Direction.ASC, "mileage"));
+    }
+
+    public Car getCarById(UUID id) {
+        return carsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid car id: " + id));
     }
 }
