@@ -6,8 +6,7 @@ import com.gr1tEnt.dealership.services.CarService;
 import com.gr1tEnt.dealership.services.CarsRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +26,7 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/cars")
 @RequiredArgsConstructor
+@Slf4j
 public class CarsController {
 
     private final CarsRepository carsRepository;
@@ -49,44 +49,21 @@ public class CarsController {
     public String addCar(@Valid @ModelAttribute CarDto carDto,
                          BindingResult result) {
 
-        if (carDto.getImageFile() == null || carDto.getImageFile().isEmpty()) {
-            result.addError(new FieldError("carDto", "imageFile", "Image is required"));
+        if (carDto.getImageFile().isEmpty()) {
+            result.addError(new FieldError("carDto", "imageFile","Image file is required"));
         }
 
         if (result.hasErrors()) {
             return "AddCar";
         }
 
-        MultipartFile image = carDto.getImageFile();
-        Date createdAt = new Date();
-        String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
-
         try {
-            String uploadDir = "public/images/";
-            Path uploadPath = Paths.get(uploadDir);
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            try (InputStream inputStream = image.getInputStream()) {
-                Files.copy(inputStream, Paths.get(uploadDir + imageFileName), StandardCopyOption.REPLACE_EXISTING);
-            }
-
-        } catch (IOException e) {
-            System.out.printf("IOException: %s\n", e.getMessage());
+            carService.addCar(carDto);
+        } catch (Exception e) {
+            System.err.println("Error adding car: " + e.getMessage());
+            result.addError(new ObjectError("globalError", "Something went wrong: " + e.getMessage()));
+            return "AddCar";
         }
-
-        Car car = Car.builder()
-                .model(carDto.getModel())
-                .description(carDto.getDescription())
-                .color(carDto.getColor())
-                .mileage(carDto.getMileage())
-                .price(carDto.getPrice())
-                .productionYear(carDto.getProductionYear())
-                .imageFileName(imageFileName)
-                .build();
-        carsRepository.save(car);
 
         return "redirect:/cars";
     }

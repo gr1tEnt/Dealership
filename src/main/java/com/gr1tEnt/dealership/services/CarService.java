@@ -37,4 +37,21 @@ public class CarService {
         }
         carsRepository.save(car);
     }
+
+    @Transactional
+    public void addCar(CarDto carDto) {
+        String fileName = fileStorageService.save(carDto.getImageFile());
+
+        Car car = Car.builder()
+                .model(carDto.getModel())
+                .description(carDto.getDescription())
+                .color(carDto.getColor())
+                .mileage(carDto.getMileage())
+                .price(carDto.getPrice())
+                .productionYear(carDto.getProductionYear())
+                .imageFileName(fileName)
+                .build();
+
+        carsRepository.save(car);
+    }
 }
