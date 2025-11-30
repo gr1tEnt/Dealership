@@ -50,7 +50,7 @@ public class CarsController {
                          BindingResult result) {
 
         if (carDto.getImageFile().isEmpty()) {
-            result.addError(new FieldError("carDto", "imageFile","Image file is required"));
+            ObjectError            result.addError(new FieldError("carDto", "imageFile", "The image is required"));
         }
 
         if (result.hasErrors()) {
