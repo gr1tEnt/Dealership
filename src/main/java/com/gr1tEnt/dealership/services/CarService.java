@@ -54,4 +54,16 @@ public class CarService {
 
         carsRepository.save(car);
     }
+
+    @Transactional
+    public void deleteCar(UUID id) {
+        Car car = carsRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid car id: " + id));
+
+        String filename = car.getImageFileName();
+
+        carsRepository.delete(car);
+
+        fileStorageService.delete(filename);
+    }
 }

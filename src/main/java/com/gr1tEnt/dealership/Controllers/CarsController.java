@@ -15,6 +15,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,23 +115,16 @@ public class CarsController {
     }
 
     @DeleteMapping("/delete")
-    public String deleteCar(@RequestParam UUID id) {
-
-        Car car = carsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
-
-        // Delete car image
-        Path imagePath = Paths.get("public/images/" + car.getImageFileName());
+    public String deleteCar(@RequestParam UUID id,
+                            RedirectAttributes redirectAttributes) {
 
         try {
-            if (Files.exists(imagePath)) {
-                Files.delete(imagePath);
-            }
-        } catch (IOException e) {
-            System.err.println("Error deleting image: " + e.getMessage());
-        }
+            carService.deleteCar(id);
 
-        carsRepository.delete(car);
+            redirectAttributes.addFlashAttribute("successMessage", "Car deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Could not delete car: " + e.getMessage());
+        }
 
         return "redirect:/cars";
     }
