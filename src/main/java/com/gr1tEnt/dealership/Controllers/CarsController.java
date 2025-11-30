@@ -2,14 +2,18 @@ package com.gr1tEnt.dealership.Controllers;
 
 import com.gr1tEnt.dealership.models.Car;
 import com.gr1tEnt.dealership.models.CarDto;
+import com.gr1tEnt.dealership.services.CarService;
 import com.gr1tEnt.dealership.services.CarsRepository;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,10 +26,11 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/cars")
+@RequiredArgsConstructor
 public class CarsController {
 
-    @Autowired
-    private CarsRepository carsRepository;
+    private final CarsRepository carsRepository;
+    private final CarService carService;
 
     @GetMapping({"", "/"})
     public String showCars(Model model) {
@@ -117,64 +122,16 @@ public class CarsController {
                           BindingResult result,
                           @RequestParam UUID id) {
 
-        // Global Exception Handler will catch the error
-        Car car = carsRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
-        model.addAttribute("car", car);
-
         if (result.hasErrors()) {
             return "EditCar";
         }
 
-        // Deleting old car's image
-        if (carDto.getImageFile() != null && !carDto.getImageFile().isEmpty()) {
-            String uploadDir = "public/images/";
-            Path oldImagePath = Paths.get(uploadDir + car.getImageFileName());
-
-            // Delete old image if it exists
-            try {
-                if (!Files.exists(oldImagePath)) {
-                    Files.delete(oldImagePath);
-                }
-            } catch (IOException e) {
-                System.err.println("Error deleting old image: " + e.getMessage());
-                // Continue even if old image deletion fails
-            }
-
-            // Saving new image
-            MultipartFile image = carDto.getImageFile();
-            Date createdAt = new Date();
-            String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
-
-            try {
-                Path uploadPath = Paths.get(uploadDir);
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                try (InputStream inputStream = image.getInputStream()) {
-                    Files.copy(inputStream, Paths.get(uploadDir + imageFileName),
-                            StandardCopyOption.REPLACE_EXISTING);
-                    car.setImageFileName(imageFileName);
-                }
-            } catch (IOException e) {
-                System.err.println("Error saving new image: " + e.getMessage());
-                result.addError(new FieldError("carDto", "imageFile", "Error uploading image: " + e.getMessage()));
-                return "EditCar";
-            }
+        try {
+            carService.updateCar(id, carDto);
+        } catch (Exception e) {
+            result.addError(new ObjectError("global", "Error updating car: " + e.getMessage()));
+            return "EditCar";
         }
-
-        Car car1 = Car.builder()
-                .model(carDto.getModel())
-                .description(carDto.getDescription())
-                .color(carDto.getColor())
-                .mileage(carDto.getMileage())
-                .price(carDto.getPrice())
-                .productionYear(carDto.getProductionYear())
-                .imageFileName(String.valueOf(carDto.getImageFile()))
-                .build();
-
-        carsRepository.save(car1);
 
         return "redirect:/cars";
     }
