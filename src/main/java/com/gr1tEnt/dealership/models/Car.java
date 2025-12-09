@@ -2,6 +2,7 @@ package com.gr1tEnt.dealership.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor // constructor for JPA
+@Accessors(chain = true)
 public class Car {
 
     @Id

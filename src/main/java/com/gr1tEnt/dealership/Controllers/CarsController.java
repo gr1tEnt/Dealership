@@ -2,87 +2,63 @@ package com.gr1tEnt.dealership.Controllers;
 
 import com.gr1tEnt.dealership.models.Car;
 import com.gr1tEnt.dealership.models.CarDto;
+import com.gr1tEnt.dealership.services.CarService;
 import com.gr1tEnt.dealership.services.CarsRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.*;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Controller
 @RequestMapping("/cars")
+@RequiredArgsConstructor
+@Slf4j
 public class CarsController {
 
-    @Autowired
-    private CarsRepository carsRepository;
+    private final CarsRepository carsRepository;
+    private final CarService carService;
 
     @GetMapping({"", "/"})
     public String showCars(Model model) {
-        List<Car> cars = carsRepository.findAll(Sort.by(Sort.Direction.ASC, "mileage"));
+        List<Car> cars = carService.getAllCars();
         model.addAttribute("cars", cars);
-        return "cars/index";
+        return "index";
     }
 
     @GetMapping("/add")
     public String showAddPage(Model model) {
         model.addAttribute("carDto", CarDto.builder().build());
-        return "cars/AddCar";
+        return "AddCar";
     }
 
     @PostMapping("/add")
     public String addCar(@Valid @ModelAttribute CarDto carDto,
                          BindingResult result) {
 
-        if (result.hasErrors()) {
-            return "cars/AddCar";
-        }
-
         if (carDto.getImageFile().isEmpty()) {
-            result.addError(new FieldError("carDto", "imageFile", "Image is required"));
+            result.addError(new FieldError("carDto", "imageFile", "The image is required"));
         }
 
-        MultipartFile image = carDto.getImageFile();
-        Date createdAt = new Date();
-        String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
+        if (result.hasErrors()) {
+            return "AddCar";
+        }
 
         try {
-            String uploadDir = "public/images/";
-            Path uploadPath = Paths.get(uploadDir);
-
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            try (InputStream inputStream = image.getInputStream()) {
-                Files.copy(inputStream, Paths.get(uploadDir + imageFileName), StandardCopyOption.REPLACE_EXISTING);
-            }
-
-        } catch (IOException e) {
-            System.out.printf("IOException: %s\n", e.getMessage());
+            carService.addCar(carDto);
+        } catch (Exception e) {
+            System.err.println("Error adding car: " + e.getMessage());
+            result.addError(new ObjectError("globalError", "Something went wrong: " + e.getMessage()));
+            return "AddCar";
         }
-
-        Car car = Car.builder()
-                .model(carDto.getModel())
-                .description(carDto.getDescription())
-                .color(carDto.getColor())
-                .mileage(carDto.getMileage())
-                .price(carDto.getPrice())
-                .productionYear(carDto.getProductionYear())
-                .imageFileName(imageFileName)
-                .build();
-        carsRepository.save(car);
 
         return "redirect:/cars";
     }
@@ -90,26 +66,11 @@ public class CarsController {
     @GetMapping("/edit")
     public String showEditPage(Model model, @RequestParam UUID id) {
 
-        try {
-            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
-            model.addAttribute("car", car);
+        Car car = carService.getCarById(id);
+        model.addAttribute("car", car);
+        model.addAttribute("carDto", mapToDto(car));
 
-            CarDto carDto = CarDto.builder()
-                    .model(car.getModel())
-                    .description(car.getDescription())
-                    .color(car.getColor())
-                    .mileage(car.getMileage())
-                    .price(car.getPrice())
-                    .productionYear(car.getProductionYear())
-                    .build();
-
-            model.addAttribute("carDto", carDto);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return "redirect:/cars";
-        }
-
-        return "cars/EditCar";
+        return "EditCar";
     }
 
     @PutMapping("/edit")
@@ -118,71 +79,43 @@ public class CarsController {
                           BindingResult result,
                           @RequestParam UUID id) {
 
+        if (result.hasErrors()) {
+            return "EditCar";
+        }
+
         try {
-            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
-            model.addAttribute("car", car);
-
-            if (result.hasErrors()) {
-                return "cars/EditCar";
-            }
-
-            // deleting old car's image
-            if (!carDto.getImageFile().isEmpty()) {
-                String uploadDir = "public/images/";
-                Path oldImagePath = Paths.get(uploadDir + car.getImageFileName());
-
-                try {
-                    Files.delete(oldImagePath);
-                } catch (IOException e) {
-                    System.out.printf("IOException: %s\n", e.getMessage());
-                }
-
-                // saving new image
-                MultipartFile image = carDto.getImageFile();
-                Date createdAt = new Date();
-                String imageFileName = createdAt.getTime() + "_" + image.getOriginalFilename();
-
-                try (InputStream inputStream = image.getInputStream()) {
-                    Files.copy(inputStream, Paths.get(uploadDir + imageFileName), StandardCopyOption.REPLACE_EXISTING);
-                }
-                car.setImageFileName(imageFileName);
-            }
-
-            car.setModel(carDto.getModel());
-            car.setDescription(carDto.getDescription());
-            car.setColor(carDto.getColor());
-            car.setMileage(carDto.getMileage());
-            car.setPrice(carDto.getPrice());
-            car.setProductionYear(carDto.getProductionYear());
-
-            carsRepository.save(car);
+            carService.updateCar(id, carDto);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            result.addError(new ObjectError("global", "Error updating car: " + e.getMessage()));
+            return "EditCar";
         }
 
         return "redirect:/cars";
     }
 
     @DeleteMapping("/delete")
-    public String deleteCar(@RequestParam UUID id) {
+    public String deleteCar(@RequestParam UUID id,
+                            RedirectAttributes redirectAttributes) {
 
         try {
-            Car car = carsRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid car id:" + id));
+            carService.deleteCar(id);
 
-            // delete car image before deleting the object
-            Path imagePath = Paths.get("public/images/" + car.getImageFileName());
-
-            try {
-                Files.delete(imagePath);
-            } catch (IOException e) {
-                System.out.printf("IOException: %s\n", e.getMessage());
-            }
-
-            carsRepository.delete(car);
+            redirectAttributes.addFlashAttribute("successMessage", "Car deleted successfully!");
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Could not delete car: " + e.getMessage());
         }
 
         return "redirect:/cars";
+    }
+
+    private CarDto mapToDto(Car car) {
+        return CarDto.builder()
+                .model(car.getModel())
+                .description(car.getDescription())
+                .color(car.getColor())
+                .mileage(car.getMileage())
+                .price(car.getPrice())
+                .productionYear(car.getProductionYear())
+                .build();
     }
 }
