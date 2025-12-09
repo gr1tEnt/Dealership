@@ -66,17 +66,9 @@ public class CarsController {
     @GetMapping("/edit")
     public String showEditPage(Model model, @RequestParam UUID id) {
 
-        try {
-            Car car = carService.getCarById(id);
-            model.addAttribute("car", car);
-
-            CarDto carDto = mapToDto(car);
-
-            model.addAttribute("carDto", carDto);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return "redirect:/cars";
-        }
+        Car car = carService.getCarById(id);
+        model.addAttribute("car", car);
+        model.addAttribute("carDto", mapToDto(car));
 
         return "EditCar";
     }
