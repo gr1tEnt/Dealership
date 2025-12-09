@@ -70,14 +70,7 @@ public class CarsController {
             Car car = carService.getCarById(id);
             model.addAttribute("car", car);
 
-            CarDto carDto = CarDto.builder()
-                    .model(car.getModel())
-                    .description(car.getDescription())
-                    .color(car.getColor())
-                    .mileage(car.getMileage())
-                    .price(car.getPrice())
-                    .productionYear(car.getProductionYear())
-                    .build();
+            CarDto carDto = mapToDto(car);
 
             model.addAttribute("carDto", carDto);
         } catch (Exception e) {
@@ -121,5 +114,16 @@ public class CarsController {
         }
 
         return "redirect:/cars";
+    }
+
+    private CarDto mapToDto(Car car) {
+        return CarDto.builder()
+                .model(car.getModel())
+                .description(car.getDescription())
+                .color(car.getColor())
+                .mileage(car.getMileage())
+                .price(car.getPrice())
+                .productionYear(car.getProductionYear())
+                .build();
     }
 }
