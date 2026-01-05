@@ -19,7 +19,7 @@ public class RegisterDto {
     String email;
 
     @Size(min = 8)
-    @NotEmpty(message = "Email is required")
+    @NotEmpty(message = "Password is required")
     String password;
 
     @NotEmpty(message = "Password confirmation is required")
