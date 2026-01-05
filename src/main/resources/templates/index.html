@@ -11,9 +11,14 @@
 
     <h1 class="text-center text-3xl font-bold my-6">Cars</h1>
 
-    <a href="/cars/add" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
-        Add Car
-    </a>
+    <div class="flex justify-between items-center mb-4">
+        <a href="/register" class="inline-block bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">
+            Register
+        </a>
+        <a href="/cars/add" class="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">
+            Add Car
+        </a>
+    </div>
 
     <!-- Message for delete operation status -->
     <div th:if="${successMessage}"
