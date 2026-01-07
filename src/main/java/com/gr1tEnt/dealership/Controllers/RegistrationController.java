@@ -24,4 +24,20 @@ public class RegistrationController {
         model.addAttribute("user", new User());
         return "Register";
     }
+
+    @PostMapping("/register")
+    public String registerUser(@Valid @ModelAttribute("user") RegisterDto registerDto, BindingResult result) {
+        if (result.hasErrors() && !registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
+            return "Register";
+        }
+
+        try {
+            userService.registerUser(registerDto);
+        } catch (Exception e) {
+            System.err.println("Error register user: " + e.getMessage());
+            result.addError(new ObjectError("globalError", "Something went wrong: " + e.getMessage()));
+            return "Register";
+        }
+        return "redirect:/cars";
+    }
 }
