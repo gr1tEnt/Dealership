@@ -17,11 +17,14 @@ public class UserService {
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Transactional
-    public User registerUser(RegisterDto registerDto) {
+    public void registerUser(RegisterDto registerDto) {
 
-        if (userRepository.existsByUsername(registerDto.getUsername()) &&
-                userRepository.existsByEmail(registerDto.getEmail())) {
-            throw new UserAlreadyExistsException("User already exists");
+        if (userRepository.existsByUsername(registerDto.getUsername())) {
+            throw new UserAlreadyExistsException("Username is already taken");
+        }
+        // mb I should offer to login if the user already exists
+        if (userRepository.existsByEmail(registerDto.getEmail())) {
+            throw new UserAlreadyExistsException("Email is already taken");
         }
 
         User user = User.builder()
@@ -32,7 +35,7 @@ public class UserService {
                 .lastName(registerDto.getLastName())
                 .createdAt(LocalDateTime.now())
                 .build();
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
 }
