@@ -26,7 +26,12 @@ public class RegistrationController {
 
     @PostMapping("/register")
     public String registerUser(@Valid @ModelAttribute("registerDto") RegisterDto registerDto, BindingResult result) {
-        if (result.hasErrors() && !registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
+        if (result.hasErrors()) {
+            return "Register";
+        }
+
+        if (registerDto.getPassword() == null || !registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
+            result.addError(new ObjectError("registerDto", "Password and confirmation password do not match"));
             return "Register";
         }
 
