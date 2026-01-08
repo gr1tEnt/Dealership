@@ -1,7 +1,6 @@
 package com.gr1tEnt.dealership.Controllers;
 
 import com.gr1tEnt.dealership.models.RegisterDto;
-import com.gr1tEnt.dealership.models.User;
 import com.gr1tEnt.dealership.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +18,14 @@ public class RegistrationController {
 
     private final UserService userService;
 
-    @GetMapping("/add")
+    @GetMapping("/register")
     public String showRegisterPage(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("registerDto", new RegisterDto());
         return "Register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@Valid @ModelAttribute("user") RegisterDto registerDto, BindingResult result) {
+    public String registerUser(@Valid @ModelAttribute("registerDto") RegisterDto registerDto, BindingResult result) {
         if (result.hasErrors() && !registerDto.getPassword().equals(registerDto.getConfirmPassword())) {
             return "Register";
         }
